@@ -6,7 +6,7 @@ The home page of Joel Green, *world architect, mythologist, aspiring novelist*, 
 
 It's a single, minimal dark page: the "JOEL GREEN." wordmark, a short introduction, a biography, and a **live writing-progress bar** showing how far along *The Halo* is.
 
-Its companion site is Joel's writing blog, [The Creative Panel](https://joelgreen.studio) ([repo](https://github.com/LykosOfficial/The-Creative-Panel---Blog)).
+Its companion site is Joel's writing blog, [The Creative Panel](https://joelgreen.studio) ([repo](https://github.com/The-Creative-Panel/The-Creative-Panel---Blog)).
 
 ## Features
 
