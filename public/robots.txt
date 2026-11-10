@@ -1,3 +1,15 @@
+# joelgreenauthor.com
+# Cloudflare adds its own managed rules above this file (AI-training crawlers). The groups below
+# name Google's crawlers directly: a crawler follows the group with its own name over "*", so
+# Search (Googlebot) and AdSense (Mediapartners-Google) always get exactly these rules.
+
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Bingbot
+User-agent: Mediapartners-Google
+User-agent: AdsBot-Google
+Allow: /
+
 User-agent: *
 Allow: /
 
