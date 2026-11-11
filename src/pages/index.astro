@@ -9,21 +9,27 @@ const API = (import.meta.env.PUBLIC_API_URL ?? 'https://api.joelgreen.studio').r
 const BOOK_SLUG = 'the-halo';
 let wordcount = 3377;
 let wordtarget = 80000;
+let countUpdated: string | null = null; // ISO date the word count last changed
 try {
 	const books = (await (await fetch(`${API}/content/books`, { signal: AbortSignal.timeout(10_000) })).json()) as {
 		slug: string;
 		wordCount: number;
 		targetWordCount: number | null;
+		wordCountUpdatedAt: string | null;
 	}[];
 	const book = books.find((b) => b.slug === BOOK_SLUG);
 	if (book) {
 		wordcount = book.wordCount;
 		wordtarget = book.targetWordCount || wordtarget;
+		countUpdated = book.wordCountUpdatedAt;
 	}
 } catch {
 	console.warn(`[author] Couldn't load word count from ${API}; using fallback numbers`);
 }
 const progressPct = Math.min(100, (wordcount / wordtarget) * 100).toFixed(2);
+/** "Updated Nov 10, 2026" (Central time, like the blog) */
+const updatedLabel = (iso: string | null) =>
+	iso ? `Updated ${new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' })}` : '';
 const currentYear = new Date().getFullYear();
 // The blog, The Creative Panel
 const BLOG_URL = 'https://joelgreen.studio/';
@@ -58,7 +64,10 @@ const BLOG_URL = 'https://joelgreen.studio/';
 			<div class="h-px w-full bg-neutral-800">
 				<div class="h-px bg-brand-teal" data-progress style={`width: ${progressPct}%`}></div>
 			</div>
-			<p class="text-[10px] text-neutral-700 text-right mt-1" data-wordtarget>Target — {wordtarget.toLocaleString()} words</p>
+			<div class="flex justify-between gap-4 mt-1">
+				<time class="text-[10px] text-neutral-600" data-wordupdated datetime={countUpdated ?? undefined}>{updatedLabel(countUpdated)}</time>
+				<p class="text-[10px] text-neutral-700 text-right" data-wordtarget>Target — {wordtarget.toLocaleString()} words</p>
+			</div>
 		</div>
 <div class="pt-8 max-w-md text-justify text-[13px] text-neutral-500 leading-relaxed space-y-4">
       <p>
@@ -109,6 +118,11 @@ const BLOG_URL = 'https://joelgreen.studio/';
 			const target = book.targetWordCount || 0;
 			const count = document.querySelector('[data-wordcount]');
 			if (count) count.textContent = `${book.wordCount.toLocaleString()} words`;
+			const updated = document.querySelector('[data-wordupdated]');
+			if (updated && book.wordCountUpdatedAt) {
+				updated.dateTime = book.wordCountUpdatedAt;
+				updated.textContent = `Updated ${new Date(book.wordCountUpdatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' })}`;
+			}
 			if (target) {
 				const bar = document.querySelector('[data-progress]');
 				if (bar) bar.style.width = `${Math.min(100, (book.wordCount / target) * 100).toFixed(2)}%`;
